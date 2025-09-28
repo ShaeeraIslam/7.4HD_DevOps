@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                bat 'pip install -r requirements.txt'
+            }
+        }
+        stage('Test') {
+            bat 'pytest --maxfail=1 --disable-warnings -q'
+        }
+        stage('Code Quality') {
+            bat 'flake8 app.py'
+        }
+        stage('Security') {
+            bat 'bandit -r app.py'
+        }
+        stage('Deploy') {
+            bat 'start /B python app.py'
+        }
+        stage('Release') {
+            echo 'Simulating release to production environment...'
+        }
+        stage('Monitoring') {
+            bat 'curl http://localhost:5000/health'
+        }
+    }
+}
